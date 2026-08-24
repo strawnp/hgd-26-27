@@ -89,11 +89,15 @@ function love.draw()
     love.graphics.clear(40/255, 45/255, 52/255, 255/255)
 
     love.graphics.setFont(smallFont)
-    love.graphics.printf('Hello Pong!', 0, 20, VIRTUAL_WIDTH, 'center')
+    if gameState == 'start' then
+        love.graphics.printf('Hello Start State!', 0, 20, VIRTUAL_WIDTH, 'center')
+    else 
+        love.graphics.printf('Hello Play State!', 0, 20, VIRTUAL_WIDTH, 'center')
+    end
 
-    love.graphics.setFont(scoreFont)
-    love.graphics.print(tostring(player1Score), VIRTUAL_WIDTH / 2 - 50, VIRTUAL_HEIGHT / 3)
-    love.graphics.print(tostring(player2Score), VIRTUAL_WIDTH / 2 + 30, VIRTUAL_HEIGHT / 3)
+    -- love.graphics.setFont(scoreFont)
+    -- love.graphics.print(tostring(player1Score), VIRTUAL_WIDTH / 2 - 50, VIRTUAL_HEIGHT / 3)
+    -- love.graphics.print(tostring(player2Score), VIRTUAL_WIDTH / 2 + 30, VIRTUAL_HEIGHT / 3)
 
     -- left paddle
     love.graphics.rectangle('fill', 10, player1Y, 5, 20)
@@ -102,7 +106,7 @@ function love.draw()
     love.graphics.rectangle('fill', VIRTUAL_WIDTH - 15, player2Y, 5, 20)
 
     -- ball
-    love.graphics.rectangle('fill', VIRTUAL_WIDTH / 2 - 2, VIRTUAL_HEIGHT/ 2 - 2, 4, 4)
+    love.graphics.rectangle('fill', ballX, ballY, 4, 4)
 
     push.finish()
 end
