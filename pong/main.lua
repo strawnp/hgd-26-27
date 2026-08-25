@@ -79,6 +79,21 @@ function love.update(dt)
         end
     end
 
+    -- check left edge of screen
+    if ball.x < 0 then 
+        servingPlayer = 1
+        player2.score = player2.score + 1
+        ball:reset()
+        gameState = 'start'
+    end
+
+    -- check right edge of screen
+    if ball.x + ball.width > VIRTUAL_WIDTH then 
+        servingPlayer = 2 
+        player1.score = player1.score + 1 
+        ball:reset()
+        gameState = 'start'
+    end
 
     -- player 1 movement
     if love.keyboard.isDown('w') then 
@@ -133,9 +148,9 @@ function love.draw()
         love.graphics.printf('Hello Play State!', 0, 20, VIRTUAL_WIDTH, 'center')
     end
 
-    -- love.graphics.setFont(scoreFont)
-    -- love.graphics.print(tostring(player1Score), VIRTUAL_WIDTH / 2 - 50, VIRTUAL_HEIGHT / 3)
-    -- love.graphics.print(tostring(player2Score), VIRTUAL_WIDTH / 2 + 30, VIRTUAL_HEIGHT / 3)
+    love.graphics.setFont(scoreFont)
+    love.graphics.print(tostring(player1.score), VIRTUAL_WIDTH / 2 - 50, VIRTUAL_HEIGHT / 3)
+    love.graphics.print(tostring(player2.score), VIRTUAL_WIDTH / 2 + 30, VIRTUAL_HEIGHT / 3)
 
     player1:render()
     player2:render()
