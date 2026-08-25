@@ -15,6 +15,8 @@ PADDLE_SPEED = 200
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
 
+    love.window.setTitle('Pong')
+
     math.randomseed(os.time())
 
     smallFont = love.graphics.newFont('font.ttf', 8)
@@ -33,8 +35,8 @@ function love.load()
     })
 
     -- create game objects
-    player1 = Paddle(10, 30, 5, 20)
-    player2 = Paddle(VIRTUAL_WIDTH - 15, VIRTUAL_HEIGHT - 30, 5, 20)
+    player1 = Paddle(10, 30, 5, 20, 0)
+    player2 = Paddle(VIRTUAL_WIDTH - 15, VIRTUAL_HEIGHT - 30, 5, 20, 0)
     ball = Ball(VIRTUAL_WIDTH / 2 - 2,  VIRTUAL_HEIGHT / 2 - 2, 4, 4)
 
     -- set initial game state
@@ -42,6 +44,42 @@ function love.load()
 end
 
 function love.update(dt)
+    if gameState == 'play' then 
+        if ball:collides(player1) then 
+            ball.dx = -ball.dx * 1.03
+            ball.x = player1.x + player1.width
+
+            if ball.dy < 0 then 
+                ball.dy = -math.random(10, 150)
+            else
+                ball.dy = math.random(10, 150)
+            end
+        end
+        if ball:collides(player2) then 
+            ball.dx = -ball.dx * 1.03
+            ball.x = player2.x - ball.width
+
+            if ball.dy < 0 then 
+                ball.dy = -math.random(10, 150)
+            else
+                ball.dy = math.random(10, 150)
+            end
+        end
+
+        -- check collision with ceiling
+        if ball.y <= 0 then 
+            ball.y = 0
+            ball.dy = -ball.dy
+        end
+
+        -- check collision with floor
+        if ball.y + ball.height >= VIRTUAL_HEIGHT then 
+            ball.y = VIRTUAL_HEIGHT - ball.height
+            ball.dy = -ball.dy 
+        end
+    end
+
+
     -- player 1 movement
     if love.keyboard.isDown('w') then 
         player1.dy = -PADDLE_SPEED
