@@ -1,10 +1,11 @@
 Paddle = Class{}
 
-function Paddle:init(x, y, width, height)
+function Paddle:init(x, y, width, height, score)
     self.x = x 
     self.y = y 
     self.width = width 
     self.height = height 
+    self.score = score
     self.dy = 0
 end
 
