@@ -25,6 +25,12 @@ function love.load()
 
     love.graphics.setFont(smallFont)
 
+    sounds = {
+        ['paddle_hit'] = love.audio.newSource('sounds/paddle_hit.wav', 'static'),
+        -- ['score'] = ...TODO...,
+        -- ['wall_hit'] = ...TODO...
+    }
+
     love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
         resizable = true,
@@ -60,6 +66,7 @@ function love.update(dt)
         end
     elseif gameState == 'play' then 
         if ball:collides(player1) then 
+            sounds['paddle_hit']:play()
             ball.dx = -ball.dx * 1.03
             ball.x = player1.x + player1.width
 
@@ -70,6 +77,7 @@ function love.update(dt)
             end
         end
         if ball:collides(player2) then 
+            sounds['paddle_hit']:play()
             ball.dx = -ball.dx * 1.03
             ball.x = player2.x - ball.width
 
