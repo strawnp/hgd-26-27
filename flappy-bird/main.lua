@@ -15,7 +15,7 @@
 ]]
 
 -- virtual resolution handling library
-push = require 'push'
+push = require 'lib/push'
 
 -- physical screen dimensions
 WINDOW_WIDTH = 1280
@@ -30,11 +30,11 @@ function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
 
     -- images we load into memory from files to later draw onto the screen
-    background = love.graphics.newImage('background.png')
-    ground = love.graphics.newImage('ground.png')
+    background = love.graphics.newImage('images/background.png')
+    ground = love.graphics.newImage('images/ground.png')
 
     -- app window title
-    love.window.setTitle('Fifty Bird')
+    love.window.setTitle('Flappy Bird')
 
     -- initialize window
     love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, {
