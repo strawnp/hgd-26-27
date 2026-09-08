@@ -17,6 +17,11 @@
 -- virtual resolution handling library
 push = require 'lib/push'
 
+-- OOP library
+Class = require 'lib/class'
+
+require 'Bird'
+
 -- physical screen dimensions
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
@@ -54,6 +59,9 @@ function love.load()
 
     -- initialize our virtual resolution
     push.setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, { upscale = 'normal' })
+
+    -- create bird
+    chuck = Bird()
 end
 
 function love.resize(w, h)
@@ -80,6 +88,8 @@ function love.draw()
 
     -- draw the ground on top of the background, toward the bottom of the screen
     love.graphics.draw(ground, -groundScroll, VIRTUAL_HEIGHT - 16)
+
+    chuck:render()
 
     push.finish()
 end
