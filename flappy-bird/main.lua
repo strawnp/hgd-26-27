@@ -78,6 +78,8 @@ function love.update(dt)
     -- calculate x-axis location of each image
     backgroundScroll = (backgroundScroll + BACKGROUND_SCROLL_SPEED * dt) % BACKGROUND_LOOPING_POINT
     groundScroll = (groundScroll + GROUND_SCROLL_SPEED * dt) % VIRTUAL_WIDTH
+
+    chuck:update(dt)
 end
 
 function love.draw()
