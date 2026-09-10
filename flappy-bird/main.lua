@@ -62,6 +62,9 @@ function love.load()
 
     -- create bird
     chuck = Bird()
+
+    -- create input table
+    love.keyboard.keysPressed = {}
 end
 
 function love.resize(w, h)
@@ -69,9 +72,15 @@ function love.resize(w, h)
 end
 
 function love.keypressed(key)
+    love.keyboard.keysPressed[key] = true
+
     if key == 'escape' then
         love.event.quit()
     end
+end
+
+function love.keyboard.wasPressed(key)
+    return love.keyboard.keysPressed[key]
 end
 
 function love.update(dt)
@@ -80,6 +89,9 @@ function love.update(dt)
     groundScroll = (groundScroll + GROUND_SCROLL_SPEED * dt) % VIRTUAL_WIDTH
 
     chuck:update(dt)
+
+    -- clear input table
+    love.keyboard.keysPressed = {}
 end
 
 function love.draw()
