@@ -3,6 +3,8 @@ Bird = Class{}
 local GRAVITY = 980
 local ANTI_GRAVITY = 300
 
+local debug = true
+
 function Bird:init()
     self.image = love.graphics.newImage('images/bird.png')
     self.width = self.image:getWidth()
@@ -43,4 +45,8 @@ end
 
 function Bird:render()
     love.graphics.draw(self.image, self.x, self.y)
+    
+    if debug then
+        love.graphics.rectangle('line', self.x + 2, self.y + 2, self.width - 6, self.height - 6)
+    end
 end
