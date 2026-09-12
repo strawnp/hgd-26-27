@@ -20,7 +20,10 @@ push = require 'lib/push'
 -- OOP library
 Class = require 'lib/class'
 
+-- classes
 require 'Bird'
+require 'Pipe'
+require 'PipePair'
 
 -- physical screen dimensions
 WINDOW_WIDTH = 1280
@@ -38,6 +41,19 @@ local BACKGROUND_SCROLL_SPEED = 30
 local GROUND_SCROLL_SPEED = 60
 
 local BACKGROUND_LOOPING_POINT = 413
+local GROUND_LOOPING_POINT = 514
+
+-- table for pipe pairs
+local pipePairs = {}
+
+-- time for spawning new pipe
+local spawnTimer = 0
+
+-- last spawned pipe's y location
+local lastY = -PIPE_HEIGHT + math.random(80) + 20
+
+-- scrolling animation flag
+local scrolling = true
 
 function love.load()
     -- initialize our nearest-neighbor filter
@@ -84,25 +100,83 @@ function love.keyboard.wasPressed(key)
 end
 
 function love.update(dt)
-    -- calculate x-axis location of each image
-    backgroundScroll = (backgroundScroll + BACKGROUND_SCROLL_SPEED * dt) % BACKGROUND_LOOPING_POINT
-    groundScroll = (groundScroll + GROUND_SCROLL_SPEED * dt) % VIRTUAL_WIDTH
+    if scrolling then
+        -- scroll background by preset speed * dt, looping back to 0 after the looping point
+        backgroundScroll = (backgroundScroll + BACKGROUND_SCROLL_SPEED * dt)
+            % BACKGROUND_LOOPING_POINT
 
-    chuck:update(dt)
+        -- scroll ground by preset speed * dt, looping back to 0 after the screen width passes
+        groundScroll = (groundScroll + GROUND_SCROLL_SPEED * dt)
+            % GROUND_LOOPING_POINT
 
-    -- clear input table
+        spawnTimer = spawnTimer + dt
+
+        -- spawn a new PipePair if the timer is past 2 seconds
+        if spawnTimer > 2 then
+            -- modify the last Y coordinate we placed so pipe gaps aren't too far apart
+            -- no higher than 10 pixels below the top edge of the screen,
+            -- and no lower than a gap length (90 pixels) from the bottom
+            local y = math.max(-PIPE_HEIGHT + 10,
+                math.min(lastY + math.random(-20, 20), VIRTUAL_HEIGHT - 90 - PIPE_HEIGHT))
+            lastY = y
+
+            table.insert(pipePairs, PipePair(y))
+            spawnTimer = 0
+        end
+
+        -- update the bird for input and gravity
+        chuck:update(dt)
+
+        -- for every pipe pair in the scene...
+        for k, pair in pairs(pipePairs) do
+            pair:update(dt)
+
+            -- check to see if bird collided with pipe
+            for l, pipe in pairs(pair.pipes) do
+                if chuck:collides(pipe) then
+                    -- pause the game to show collision
+                    scrolling = false
+                end
+            end
+
+            -- if pipe is no longer visible past left edge, remove it from scene
+            if pair.x < -PIPE_WIDTH then
+                pair.remove = true
+            end
+        end
+
+        -- remove any flagged pipes
+        -- we need this second loop, rather than deleting in the previous loop, because
+        -- modifying the table in-place without explicit keys will result in skipping the
+        -- next pipe, since all implicit keys (numerical indices) are automatically shifted
+        -- down after a table removal
+        for k, pair in pairs(pipePairs) do
+            if pair.remove then
+                table.remove(pipePairs, k)
+            end
+        end
+    end
+
+    -- reset input table
     love.keyboard.keysPressed = {}
 end
 
 function love.draw()
     push.start()
 
-    -- draw the background starting at top left (0, 0)
+    -- draw the background at the negative looping point
     love.graphics.draw(background, -backgroundScroll, 0)
 
-    -- draw the ground on top of the background, toward the bottom of the screen
+    -- render all the pipe pairs in our scene
+    for k, pair in pairs(pipePairs) do
+        pair:render()
+    end
+
+    -- draw the ground on top of the background, toward the bottom of the screen,
+    -- at its negative looping point
     love.graphics.draw(ground, -groundScroll, VIRTUAL_HEIGHT - 16)
 
+    -- render our bird to the screen using its own render logic
     chuck:render()
 
     push.finish()
