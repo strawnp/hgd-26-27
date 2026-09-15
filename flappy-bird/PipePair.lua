@@ -18,6 +18,9 @@ function PipePair:init(y)
 
     -- whether this pipe pair is ready to be removed from the scene
     self.remove = false
+
+    -- whether this pipe pair has been scored
+    self.scored = false
 end
 
 function PipePair:update(dt)
