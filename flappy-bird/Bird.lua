@@ -1,7 +1,7 @@
 Bird = Class{}
 
-local GRAVITY = 980
-local ANTI_GRAVITY = 300
+local GRAVITY = 930
+local ANTI_GRAVITY = 270
 
 local debug = true
 
