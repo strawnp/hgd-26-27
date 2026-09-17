@@ -51,16 +51,6 @@ local GROUND_SCROLL_SPEED = 60
 local BACKGROUND_LOOPING_POINT = 413
 local GROUND_LOOPING_POINT = 514
 
--- table for pipe pairs
-local pipePairs = {}
-
--- time for spawning new pipe
-local spawnTimer = 0
-local SPAWN_GAP = 2
-
--- last spawned pipe's y location
-local lastY = -PIPE_HEIGHT + math.random(80) + 20
-
 -- scrolling animation flag
 local scrolling = true
 
@@ -78,6 +68,19 @@ function love.load()
     flappyFont = love.graphics.newFont('fonts/flappy.ttf', 28)
     hugeFont = love.graphics.newFont('fonts/flappy.ttf', 56)
     love.graphics.setFont(flappyFont)
+
+    -- load in all our sounds
+    gSounds = {
+        ['jump'] = love.audio.newSource('sounds/jump.wav', 'static'),
+        ['explosion'] = love.audio.newSource('sounds/explosion.wav', 'static'),
+        ['hurt'] = love.audio.newSource('sounds/hurt.wav', 'static'),
+        ['score'] = love.audio.newSource('sounds/score.wav', 'static'),
+        ['music'] = love.audio.newSource('sounds/marios_way.mp3', 'static')
+    }
+
+    -- start looping bg music
+    gSounds['music']:setLooping(true)
+    gSounds['music']:play()
 
     -- app window title
     love.window.setTitle('Flappy Bird')
@@ -101,8 +104,11 @@ function love.load()
     }
     gStateMachine:change('title')
 
-    -- create input table
+    -- create input table for keyboard
     love.keyboard.keysPressed = {}
+
+    -- create input table for mouse
+    love.mouse.buttonsPressed = {}
 end
 
 function love.resize(w, h)
@@ -117,8 +123,16 @@ function love.keypressed(key)
     end
 end
 
+function love.mousepressed(x, y, button)
+    love.mouse.buttonsPressed[button] = true
+end
+
 function love.keyboard.wasPressed(key)
     return love.keyboard.keysPressed[key]
+end
+
+function love.mouse.wasPressed(button)
+    return love.mouse.buttonsPressed[button]
 end
 
 function love.update(dt)
@@ -130,8 +144,9 @@ function love.update(dt)
     -- now, we just update the state machine, which defers to the right state
     gStateMachine:update(dt)
 
-    -- reset input table
+    -- reset input tables
     love.keyboard.keysPressed = {}
+    love.mouse.buttonsPressed = {}
 end
 
 function love.draw()

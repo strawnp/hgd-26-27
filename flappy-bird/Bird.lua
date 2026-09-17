@@ -35,8 +35,9 @@ function Bird:update(dt)
     self.dy = self.dy + GRAVITY * dt
 
     -- apply anti-gravity acceleration force
-    if love.keyboard.wasPressed('space') then
+    if love.keyboard.wasPressed('space') or love.mouse.wasPressed(1) then
         self.dy = -ANTI_GRAVITY
+        gSounds['jump']:play()
     end
 
     -- apply velocity to position
