@@ -28,6 +28,7 @@ function PlayState:enter(params)
     self.highScores = params.highScores
     self.ball = params.ball
     self.level = params.level
+    self.powerups = {}
 
     self.recoverPoints = params.recoverPoints
 
@@ -90,6 +91,10 @@ function PlayState:update(dt)
 
         -- only check collision if we're in play
         if brick.inPlay and self.ball:collides(brick) then
+
+            if math.random(1, 4) < 3 then
+                table.insert(self.powerups, Powerup(brick.x + 8, brick.y + 8))
+            end
 
             -- add to score
             self.score = self.score + (brick.tier * 200 + brick.color * 25)
@@ -168,6 +173,22 @@ function PlayState:update(dt)
         end
     end
 
+    for k, power in pairs(self.powerups) do
+        power:update(dt)
+    end
+
+    for k, power in pairs(self.powerups) do
+        if power.y > VIRTUAL_HEIGHT then
+            power.remove = true
+        end
+    end
+
+    for k, power in pairs(self.powerups) do
+        if power.remove then
+            table.remove(self.powerups, k)
+        end
+    end
+
     -- if ball goes below bounds, revert to serve state and decrease health
     if self.ball.y >= VIRTUAL_HEIGHT then
         self.health = self.health - 1
@@ -210,6 +231,10 @@ function PlayState:render()
     -- render all particle systems
     for k, brick in pairs(self.bricks) do
         brick:renderParticles()
+    end
+
+    for k, power in pairs(self.powerups) do
+        power:render()
     end
 
     self.paddle:render()
