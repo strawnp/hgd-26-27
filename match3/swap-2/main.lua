@@ -98,7 +98,7 @@ function love.keypressed(key)
             board[tile2.gridY][tile2.gridX] = tempTile
 
             -- tween x and y coordinates instead of instantly setting them
-            Timer.tween(0.2, {
+            Timer.tween(0.4, {
                 [tile2] = {x = tile1.x, y = tile1.y},
                 [tile1] = {x = tempX, y = tempY}
             })
